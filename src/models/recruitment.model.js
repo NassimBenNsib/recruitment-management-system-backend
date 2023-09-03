@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { RecruitmentStatus } from "../../../src/constants/index.js";
+import { RecruitmentStatus } from "../constants/index.js";
 
 const RecruitmentSchema = new mongoose.Schema({
   observation: { required: true, type: String, trim: true },

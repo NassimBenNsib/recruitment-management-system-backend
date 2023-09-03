@@ -5,7 +5,7 @@ import {
   QuizModel,
   RecruitmentModel,
   UserModel,
-} from "../../server/src/models/index.js";
+} from "../models/index.js";
 
 const createOne = async (request, response) => {
   try {

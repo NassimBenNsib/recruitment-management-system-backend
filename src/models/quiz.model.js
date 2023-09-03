@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { AnswerEvaluation } from "../../../src/constants/index.js";
+import { AnswerEvaluation } from "../constants/index.js";
 
 const QuestionSchema = new mongoose.Schema({
   question: {

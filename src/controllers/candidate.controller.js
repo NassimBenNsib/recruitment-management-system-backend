@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
-import {
-  CandidateModel,
-  RecruitmentModel,
-} from "../../server/src/models/index.js";
+import { CandidateModel, RecruitmentModel } from "../models/index.js";
 
 const createOne = async (request, response) => {
   try {

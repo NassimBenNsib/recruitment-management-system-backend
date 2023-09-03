@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import { APP_CONFIG } from "../../config/index.js";
-import { UserModel } from "../../server/src/models/index.js";
+import { UserModel } from "../models/index.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { UserStatus } from "../constants/index.js";
-import { CounterModel } from "../../server/src/models/counter.model.js";
+import { CounterModel } from "../models/counter.model.js";
 
 // const signIn = async (req, res) => {
 //   const { email, password } = req.body;
