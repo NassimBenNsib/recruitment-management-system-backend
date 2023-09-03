@@ -3,7 +3,7 @@ import { APP_CONFIG } from "../../config/index.js";
 import { UserModel } from "../models/index.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { UserStatus } from "../constants/index.js";
+import { UserRole, UserStatus } from "../constants/index.js";
 import { CounterModel } from "../models/counter.model.js";
 
 // const signIn = async (req, res) => {
@@ -11,14 +11,14 @@ import { CounterModel } from "../models/counter.model.js";
 //   try {
 //     const existingUser = await User.findOne({ email });
 //     if (!existingUser) {
-//       return res.status(404).json("User was not found");
+//       return response.status(404).json("User was not found");
 //     }
 //     const isPasswordCorrect = await bcrypt.compare(
 //       password,
 //       existingUser.password
 //     );
 //     if (!isPasswordCorrect) {
-//       return res.status(400).json({ message: "Invalid credentials" });
+//       return response.status(400).json({ message: "Invalid credentials" });
 //     }
 //     const token = jwt.sign(
 //       { id: existingUser._id, role: existingUser.role },
@@ -27,28 +27,46 @@ import { CounterModel } from "../models/counter.model.js";
 //         expiresIn: "1h",
 //       }
 //     );
-//     res.status(200).json({ result: existingUser, token });
+//     response.status(200).json({ result: existingUser, token });
 //   } catch (error) {
-//     res.status(500).json(error);
+//     response.status(500).json(error);
 //   }
 // };
-const login = async (req, res) => {
+const login = async (request, response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = request.body;
     const user = await UserModel.findOne({ email });
     if (!user) {
-      return res.status(404).json({
+      return response.status(404).json({
         message: "No account found with this email. Please register first",
       });
     }
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      return res.status(401).json({
+      return response.status(401).json({
         type: "error",
         message: "Password is incorrect",
         data: null,
       });
     }
+    if (user.status === UserStatus.Pending)
+      return response.status(401).json({
+        type: "error",
+        message: "Your account is not approved yet",
+        data: null,
+      });
+    if (user.status === UserStatus.Blocked)
+      return response.status(401).json({
+        type: "error",
+        message: "Your account is blocked",
+        data: null,
+      });
+    if (user.status === UserStatus.Rejected)
+      return response.status(401).json({
+        type: "error",
+        message: "Your account is rejected",
+        data: null,
+      });
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
@@ -57,7 +75,7 @@ const login = async (req, res) => {
         expiresIn: "1h",
       }
     );
-    return res.status(200).json({
+    return response.status(200).json({
       type: "success",
       message: "User logged in successfully",
       data: { token, user },
@@ -67,14 +85,14 @@ const login = async (req, res) => {
     console.table(error);
     console.error(error);
     console.error("============= ERROR END =============");
-    return res.status(500).json({
+    return response.status(500).json({
       type: "error",
       message: "Error during login, Please try again later",
       data: error,
     });
   }
 };
-const register = async (request, res) => {
+const register = async (request, response) => {
   try {
     const exists = await UserModel.exists({ email: request.body.email });
     if (exists)
@@ -85,14 +103,39 @@ const register = async (request, res) => {
       });
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(request.body.password, salt);
+    const counter = await CounterModel.findOneAndUpdate(
+      {},
+      { $inc: { userNumber: 1 } },
+      { new: true }
+    );
     const newUser = new UserModel({
-      ...request.body,
+      firstName: request.body.firstName,
+      lastName: request.body.lastName,
+      email: request.body.email,
+      role: UserRole.Candidate,
+      department: request.body.department,
       password: hash,
+      status: UserStatus.Pending,
+      userNumber: counter.userNumber,
     });
-    const savedUser = await newUser.save();
-    res.status(200).json(savedUser);
+    const user = await UserModel.create(newUser);
+    if (!user)
+      return response.status(400).json({
+        type: "error",
+        message: "Error during creating new user, Please try again later",
+        data: null,
+      });
+    return response.status(201).json({
+      type: "success",
+      message: "User created successfully",
+      data: user,
+    });
   } catch (error) {
-    res.status(500).json({
+    console.error("============ ERROR BEGIN ============");
+    console.table(error);
+    console.error(error);
+    console.error("============= ERROR END =============");
+    return response.status(500).json({
       type: "error",
       message: "Error during creating new user, Please try again later",
       data: error,
@@ -153,6 +196,7 @@ const createOne = async (request, response) => {
 const getOneById = async (request, response) => {
   try {
     const { id } = request.params;
+    console.log(id);
     const user = await UserModel.findOne({
       _id: id,
     });
@@ -212,6 +256,7 @@ const updateOneById = async (request, response) => {
       department = user.department,
       role = user.role,
       password = user.password,
+      status = user.status,
     } = request.body;
     if (password !== user.password) {
       const salt = bcrypt.genSaltSync(10);
@@ -223,6 +268,7 @@ const updateOneById = async (request, response) => {
     user.lastName = lastName;
     user.department = department;
     user.role = role;
+    user.status = status;
     await user.save();
     return response.status(200).json({
       type: "success",
@@ -278,18 +324,20 @@ const getMany = async (request, response) => {
       lastName = "",
       role = "",
       department = "",
+      status = "",
       minUserNumber = 0,
       maxUserNumber = 999999,
       start = 0,
       limit = 10000,
       sortBy = "email",
       order = 1,
-    } = request.body;
+    } = request.query;
     const filter = {
       email: { $regex: email, $options: "i" },
       firstName: { $regex: firstName, $options: "i" },
       lastName: { $regex: lastName, $options: "i" },
       role: { $regex: role, $options: "i" },
+      status: { $regex: status, $options: "i" },
       department: { $regex: department, $options: "i" },
       userNumber: { $gte: minUserNumber, $lte: maxUserNumber },
     };

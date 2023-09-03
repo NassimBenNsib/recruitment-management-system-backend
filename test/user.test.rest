@@ -1,6 +1,6 @@
 @host = http://localhost
 @port = 5000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZjIzODM3NjE0MWRmMWQxNjlhNzhiZiIsInJvbGUiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNjkzNTk1NzE4LCJleHAiOjE2OTM1OTkzMTh9.GaNXF_Rb1vqysW6D1O1wgF7IM9M5nqwNuJWXpipMj3A
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZjRjYjE3YzI4NDg2MDczNDRlNjI5MCIsInJvbGUiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNjkzNzY0NzA2LCJleHAiOjE2OTM3NjgzMDZ9.Za-zvZfL6PA31_nqvPkFfNon8QQgtjLWcKl6ffKljKI
 @feature = user
 ######################################
 ########    Login of user
@@ -10,7 +10,20 @@ token: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "email": "email2@example.com",
+    "email": "zibi@example.com",
+    "password": "example+123"
+}
+
+######################################
+########    Register of candidate
+######################################
+POST {{host}}:{{port}}/api/{{feature}}/register
+Content-Type: application/json
+
+{
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "hamza@example.com",
     "password": "example+123"
 }
 
@@ -24,7 +37,7 @@ Content-Type: application/json
 {
     "firstName": "First Name",
     "lastName": "Last Name",
-    "email": "emaidl2@example.com",
+    "email": "vkkkvk@example.com",
     "password": "example+123",
     "department": "Department",
     "role" : "Administrator"
@@ -33,30 +46,25 @@ Content-Type: application/json
 ######################################
 ########    Get one user by id
 ######################################
-GET {{host}}:{{port}}/api/{{feature}}/get-one-by-id/64f22bcbffbf09277137d4d6
+GET {{host}}:{{port}}/api/{{feature}}/get-one-by-id/64f4cd1bb73552d72e65166c
 token: Bearer {{token}}
 
 ######################################
 ########    Update one user by id
 ######################################
-PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64f22d6eb1116272dc4b59f8
+PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64f4cd1bb73552d72e65166c
 token: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "firstName": "First Name 1",
-    "lastName": "Last Name",
-    "email": "email2@example.com",
-    "password": "example+123",
-    "department": "Department",
-    "role" : "Administrator"
+    "status": "Approved"
 }
-
 
 ######################################
 ########    Delete one user by id
 ######################################
-DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64f22d6eb1116272dc4b59f8
+DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64f4cd1bb73552d72e65166c
+token: Bearer {{token}}
 
 ######################################
 ########    Get many user by filter
@@ -68,21 +76,21 @@ Content-Type: application/json
 {
     "firstName": "",
     "lastName": "",
-    "department": "Department",
+    "department": "",
     "email": "",
-    "role" : "Administrator",
-    "limit" : 2,
-    "start" : 2
+    "role" : "Candidate",
+    "status" : "Pending"
 }
 
 ######################################
 ########    Delete many user by ids
 ######################################
 DELETE  {{host}}:{{port}}/api/{{feature}}/delete-many-by-ids
+token : Bearer {{token}}
 Content-Type: application/json
 
 {
-    "ids": ["64f22f5cee47fe5a315901d8"]
+    "ids": ["64f4c44f183a815a2cc2a07c"]
 }
 
 

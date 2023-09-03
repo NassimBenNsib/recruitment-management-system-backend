@@ -4,6 +4,8 @@ import { verifyTokenAndRole } from "../middlewares/authorize.js";
 import { UserRole } from "../constants/index.js";
 const UserRouter = Router();
 
+UserRouter.post("/login", UserController.login);
+UserRouter.post("/register", UserController.register);
 UserRouter.post(
   "/create-one",
   verifyTokenAndRole([UserRole.Administrator]),
@@ -24,7 +26,6 @@ UserRouter.delete(
   verifyTokenAndRole([UserRole.Administrator]),
   UserController.deleteOneById
 );
-UserRouter.post("/login", UserController.login);
 UserRouter.get(
   "/get-many",
   verifyTokenAndRole([UserRole.Administrator]),

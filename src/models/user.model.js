@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema(
       trim: true,
     },
     password: { required: true, type: String, trim: true },
-    department: { required: true, type: String, trim: true },
+    department: { required: false, type: String, trim: true },
     status: {
       type: String,
       enum: [...Object.values(UserStatus)],

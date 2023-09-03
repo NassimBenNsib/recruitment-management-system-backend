@@ -16,6 +16,7 @@ export const UserStatus = {
   Pending: "Pending",
   Approved: "Approved",
   Blocked: "Blocked",
+  Rejected: "Rejected",
 };
 
 export const AnswerEvaluation = {

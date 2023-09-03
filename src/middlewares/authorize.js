@@ -8,6 +8,7 @@ export const verifyTokenAndRole = (requiredRoles) => async (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1];
+  if (!token) return res.status(401).json("Token is not valid!");
   const decoded = jwt.verify(token, APP_CONFIG.JWT_SECRET);
   req.user = decoded;
 
