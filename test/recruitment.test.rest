@@ -5,17 +5,15 @@
 
 ### Create new record
 POST {{host}}:{{port}}/api/{{feature}}/create-one
-Authorization: Bearer {{token}}
+token: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "observation": "44444",
     "experience": "experience1",
     "qualification": "qualification1",
     "needs": "needs1",
     "sourceOfNeeds": "sourceOfNeeds1",
     "departmentHead": "departmentHead1",
-    "requestNumber": 45642,
     "education": "education1",
     "objective": "objective1",
     "department": "department1"
@@ -23,57 +21,33 @@ Content-Type: application/json
 
 ### Get one record by id
 GET {{host}}:{{port}}/api/{{feature}}/get-one-by-id/64e255d3e529f1c9dd430e9d
-Authorization: Bearer {{token}}
+token: Bearer {{token}}
 
 ### Update one record by id
-PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64dcafe22bebc00886063b09
-Authorization: Bearer {{token}}
+PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64f4e448049f1652965c1a23
+token: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "observation": "observation1",
-    "experience": "experience1",
-    "qualification": "qualification1",
-    "needs": "needs1",
-    "sourceOfNeeds": "sourceOfNeeds1",
-    "departmentHead": "departmentHead1",
-    "requestNumber": 4444,
-    "education": "education1",
-    "objective": "objective1",
-    "department": "department1",
     "status": "Approved"
 }
 
 ### Delete one record by id
 DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64dcafff2bebc00886063b10
-Authorization: Bearer {{token}}
+token: Bearer {{token}}
 
 ### Get many record
 GET {{host}}:{{port}}/api/{{feature}}/get-many?observation=&experience=&qualification=&needs=&sourceOfNeeds=&departmentHead=&education=&objective=&department=&status=Rejected&minRequestNumber=20&maxRequestNumber=200000&start=0&limit=200&order=1
-Authorization: Bearer {{token}}
+token: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "observation": "",
-    "experience": "",
-    "qualification": "",
-    "needs": "",
-    "sourceOfNeeds": "",
-    "departmentHead": "",
-    "education": "",
-    "objective": "",
-    "department": "",
-    "status": "Pending",
-    "minRequestNumber": 20,
-    "maxRequestNumber": 200000,
-    "start":0,
-    "limit": 200,
-    "order" : 1
+    "status": "Approved"
 }
 
 ### Delete many records by ids
 DELETE  {{host}}:{{port}}/api/{{feature}}/delete-many-by-ids
-Authorization: Bearer {{token}}
+token: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -82,7 +56,7 @@ Content-Type: application/json
 
 ### Update many records by ids
 PUT  {{host}}:{{port}}/api/{{feature}}/update-many-by-ids
-Authorization: Bearer {{token}}
+token: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -103,7 +77,7 @@ Content-Type: application/json
 
 ### Update many records
 PUT  {{host}}:{{port}}/api/{{feature}}/update-many
-Authorization: Bearer {{token}}
+token: Bearer {{token}}
 Content-Type: application/json
 
 {

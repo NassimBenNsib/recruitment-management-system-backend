@@ -326,9 +326,9 @@ const getMany = async (request, response) => {
       department = "",
       status = "",
       minUserNumber = 0,
-      maxUserNumber = 999999,
+      maxUserNumber = 999_999,
       start = 0,
-      limit = 10000,
+      limit = 100_000,
       sortBy = "email",
       order = 1,
     } = request.query;

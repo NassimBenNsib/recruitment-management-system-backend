@@ -1,21 +1,21 @@
 import mongoose from "mongoose";
 import { RecruitmentStatus } from "../constants/index.js";
 import { RecruitmentModel } from "../models/index.js";
+import { CounterModel } from "../models/counter.model.js";
 
 const createOne = async (request, response) => {
   try {
-    const exits = await RecruitmentModel.findOne({
-      requestNumber: request.body.requestNumber,
-    });
-    if (exits)
-      return response.status(400).json({
-        type: "error",
-        message: "Request number already exists",
-        data: null,
-      });
+    const counter = await CounterModel.findOneAndUpdate(
+      {},
+      { $inc: { recruitmentNumber: 1 } },
+      { new: true }
+    );
     const record = await RecruitmentModel.create({
       ...request.body,
       status: RecruitmentStatus.Pending,
+      recruitmentNumber: counter.recruitmentNumber,
+      observation: "",
+      opinion: "",
     });
     if (!record)
       return response.status(400).json({
@@ -83,16 +83,16 @@ const updateOneById = async (request, response) => {
       objective: record.objective,
       department: record.department,
       status: record.status,
-      requestNumber: record.requestNumber,
+      opinion: record.opinion,
       ...request.body,
     };
     record.observation = newRecord.observation;
+    record.opinion = newRecord.opinion;
     record.experience = newRecord.experience;
     record.qualification = newRecord.qualification;
     record.needs = newRecord.needs;
     record.sourceOfNeeds = newRecord.sourceOfNeeds;
     record.departmentHead = newRecord.departmentHead;
-    record.requestNumber = newRecord.requestNumber;
     record.education = newRecord.education;
     record.objective = newRecord.objective;
     record.department = newRecord.department;
@@ -146,25 +146,27 @@ const getMany = async (request, response) => {
       needs = "",
       sourceOfNeeds = "",
       departmentHead = "",
-      minRequestNumber = 1,
-      maxRequestNumber = 200000000,
+      minRecruitmentNumber = 1,
+      maxRecruitmentNumber = 200_000_000,
       education = "",
       objective = "",
       department = "",
+      opinion = "",
       status = "",
       start = 0,
-      limit = 20,
-      sortBy = "requestNumber",
+      limit = 100_000,
+      sortBy = "recruitmentNumber",
       order = -1,
     } = request.query;
     const records = await RecruitmentModel.find({
       observation: { $regex: observation, $options: "i" },
       experience: { $regex: experience, $options: "i" },
       qualification: { $regex: qualification, $options: "i" },
+      opinion: { $regex: opinion, $options: "i" },
       needs: { $regex: needs, $options: "i" },
-      requestNumber: {
-        $gte: minRequestNumber,
-        $lte: maxRequestNumber,
+      recruitmentNumber: {
+        $gte: minRecruitmentNumber,
+        $lte: maxRecruitmentNumber,
       },
       sourceOfNeeds: { $regex: sourceOfNeeds, $options: "i" },
       departmentHead: { $regex: departmentHead, $options: "i" },
@@ -213,6 +215,7 @@ const updateManyByIds = async (request, response) => {
         objective: record.objective,
         department: record.department,
         status: record.status,
+        opinion: record.opinion,
         ...data,
       };
       record.observation = newRecord.observation;
@@ -225,6 +228,7 @@ const updateManyByIds = async (request, response) => {
       record.objective = newRecord.objective;
       record.department = newRecord.department;
       record.status = newRecord.status;
+      record.opinion = newRecord.opinion;
       await record.save();
       updatedRecords.push(record);
     }
@@ -252,8 +256,9 @@ const updateMany = async (request, response) => {
       needs = "",
       sourceOfNeeds = "",
       departmentHead = "",
-      minRequestNumber = 1,
-      maxRequestNumber = 200000000,
+      opinion = "",
+      minRecruitmentNumber = 1,
+      maxRecruitmentNumber = 200_000_000,
       education = "",
       objective = "",
       department = "",
@@ -263,10 +268,11 @@ const updateMany = async (request, response) => {
       observation: { $regex: observation, $options: "i" },
       experience: { $regex: experience, $options: "i" },
       qualification: { $regex: qualification, $options: "i" },
+      opinion: { $regex: opinion, $options: "i" },
       needs: { $regex: needs, $options: "i" },
-      requestNumber: {
-        $gte: minRequestNumber,
-        $lte: maxRequestNumber,
+      recruitmentNumber: {
+        $gte: minRecruitmentNumber,
+        $lte: maxRecruitmentNumber,
       },
       sourceOfNeeds: { $regex: sourceOfNeeds, $options: "i" },
       departmentHead: { $regex: departmentHead, $options: "i" },
@@ -292,10 +298,12 @@ const updateMany = async (request, response) => {
         departmentHead: records[i].departmentHead,
         education: records[i].education,
         objective: records[i].objective,
+        opinion: records[i].opinion,
         department: records[i].department,
         status: records[i].status,
         ...data,
       };
+      records[i].opinion = newRecord.opinion;
       records[i].observation = newRecord.observation;
       records[i].experience = newRecord.experience;
       records[i].qualification = newRecord.qualification;
