@@ -1,0 +1,136 @@
+@host = http://localhost
+@port = 5000
+@token = eyJhbGciOiJIUzI1NiJ9.LGZsZnplbWxmemUsZm1lbA.SS8RtrNp0MAgIFX8ueSp1WzlND99lGyo4tPDsghd3P0
+@feature = recruitment
+
+### Create new record
+POST {{host}}:{{port}}/api/{{feature}}/create-one
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "observation": "44444",
+    "experience": "experience1",
+    "qualification": "qualification1",
+    "needs": "needs1",
+    "sourceOfNeeds": "sourceOfNeeds1",
+    "departmentHead": "departmentHead1",
+    "requestNumber": 45642,
+    "education": "education1",
+    "objective": "objective1",
+    "department": "department1"
+}
+
+### Get one record by id
+GET {{host}}:{{port}}/api/{{feature}}/get-one-by-id/64e255d3e529f1c9dd430e9d
+Authorization: Bearer {{token}}
+
+### Update one record by id
+PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64dcafe22bebc00886063b09
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "observation": "observation1",
+    "experience": "experience1",
+    "qualification": "qualification1",
+    "needs": "needs1",
+    "sourceOfNeeds": "sourceOfNeeds1",
+    "departmentHead": "departmentHead1",
+    "requestNumber": 4444,
+    "education": "education1",
+    "objective": "objective1",
+    "department": "department1",
+    "status": "Approved"
+}
+
+### Delete one record by id
+DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64dcafff2bebc00886063b10
+Authorization: Bearer {{token}}
+
+### Get many record
+GET {{host}}:{{port}}/api/{{feature}}/get-many?observation=&experience=&qualification=&needs=&sourceOfNeeds=&departmentHead=&education=&objective=&department=&status=Rejected&minRequestNumber=20&maxRequestNumber=200000&start=0&limit=200&order=1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "observation": "",
+    "experience": "",
+    "qualification": "",
+    "needs": "",
+    "sourceOfNeeds": "",
+    "departmentHead": "",
+    "education": "",
+    "objective": "",
+    "department": "",
+    "status": "Pending",
+    "minRequestNumber": 20,
+    "maxRequestNumber": 200000,
+    "start":0,
+    "limit": 200,
+    "order" : 1
+}
+
+### Delete many records by ids
+DELETE  {{host}}:{{port}}/api/{{feature}}/delete-many-by-ids
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "ids": ["64dcafe22bebc00886063b09","64dcafcc2bebc00886063b05"]
+}
+
+### Update many records by ids
+PUT  {{host}}:{{port}}/api/{{feature}}/update-many-by-ids
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "ids": ["64dc9b209af0c3674ee9a2f5","64dc7d45b196d987f755f29d"],
+    "data" : {
+        "observation": "uu",
+        "experience": "experience1",
+        "qualification": "qualification1",
+        "needs": "needs1",
+        "sourceOfNeeds": "sourceOfNeeds1",
+        "departmentHead": "departmentHead1",
+        "education": "education1",
+        "objective": "objective1",
+        "department": "department1",
+        "status": "Pending"
+    }
+}
+
+### Update many records
+PUT  {{host}}:{{port}}/api/{{feature}}/update-many
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "filter" : {
+        "observation": "uu",
+        "experience": "",
+        "qualification": "",
+        "needs": "",
+        "sourceOfNeeds": "",
+        "departmentHead": "",
+        "requestNumber": 456,
+        "education": "",
+        "objective": "",
+        "department": "",
+        "minRequestNumber": 1,
+        "maxRequestNumber": 200000
+    },
+    "data" : {
+        "observation": "mm",
+        "experience": "experience1",
+        "qualification": "qualification1",
+        "needs": "needs1",
+        "sourceOfNeeds": "sourceOfNeeds1",
+        "departmentHead": "departmentHead1",
+        "education": "education1",
+        "objective": "objective1",
+        "department": "department1",
+        "status": "Pending"
+    }
+}

@@ -1,0 +1,74 @@
+@host = http://localhost
+@port = 8000
+@token = eyJhbGciOiJIUzI1NiJ9.LGZsZnplbWxmemUsZm1lbA.SS8RtrNp0MAgIFX8ueSp1WzlND99lGyo4tPDsghd3P0
+@feature = quiz
+
+### Create new record
+POST {{host}}:{{port}}/api/{{feature}}/create-one
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "interviewId": "64dce3167baa7950f86869d6",
+    "theme": "theme223",
+    "quiz" : [
+        {
+            "question" : "question1",
+            "answer" : "Wrong"
+        },
+        {
+            "question" : "question2",
+            "answer" : "Wrong"
+        }
+    ]
+}
+
+### Get one record by id
+GET {{host}}:{{port}}/api/{{feature}}/get-one-by-id/64dce1ab7514a379e2e4039b
+Authorization: Bearer {{token}}
+
+### Update one record by id
+PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64dce1ab7514a379e2e4039b
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "theme": "theme22",
+    "quiz" : [
+        {
+            "question" : "questio12356",
+            "answer" : "Wrong"
+        },
+        {
+            "question" : "question2",
+            "answer" : "Wrong"
+        }
+    ]
+}
+
+### Delete one record by id
+DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64dce1ab7514a379e2e4039b
+Authorization: Bearer {{token}}
+
+### Get many record
+GET {{host}}:{{port}}/api/{{feature}}/get-many
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+      "theme" : "theme22",
+      "interviewId" : "",
+      "start" : 0,
+      "limit" : 20,
+      "sortBy" : "interviewId",
+      "order" : 1
+}
+
+### Delete many records by ids
+DELETE  {{host}}:{{port}}/api/{{feature}}/delete-many-by-ids
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "ids": ["64dcde9270ed6208f69ed246"]
+}

@@ -1,0 +1,88 @@
+@host = http://localhost
+@port = 5000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZjIzODM3NjE0MWRmMWQxNjlhNzhiZiIsInJvbGUiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNjkzNTk1NzE4LCJleHAiOjE2OTM1OTkzMTh9.GaNXF_Rb1vqysW6D1O1wgF7IM9M5nqwNuJWXpipMj3A
+@feature = user
+######################################
+########    Login of user
+######################################
+POST {{host}}:{{port}}/api/{{feature}}/login
+token: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "email": "email2@example.com",
+    "password": "example+123"
+}
+
+######################################
+########    Create new user
+######################################
+POST {{host}}:{{port}}/api/{{feature}}/create-one
+token: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "emaidl2@example.com",
+    "password": "example+123",
+    "department": "Department",
+    "role" : "Administrator"
+}
+
+######################################
+########    Get one user by id
+######################################
+GET {{host}}:{{port}}/api/{{feature}}/get-one-by-id/64f22bcbffbf09277137d4d6
+token: Bearer {{token}}
+
+######################################
+########    Update one user by id
+######################################
+PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64f22d6eb1116272dc4b59f8
+token: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "firstName": "First Name 1",
+    "lastName": "Last Name",
+    "email": "email2@example.com",
+    "password": "example+123",
+    "department": "Department",
+    "role" : "Administrator"
+}
+
+
+######################################
+########    Delete one user by id
+######################################
+DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64f22d6eb1116272dc4b59f8
+
+######################################
+########    Get many user by filter
+######################################
+GET {{host}}:{{port}}/api/{{feature}}/get-many
+token: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "firstName": "",
+    "lastName": "",
+    "department": "Department",
+    "email": "",
+    "role" : "Administrator",
+    "limit" : 2,
+    "start" : 2
+}
+
+######################################
+########    Delete many user by ids
+######################################
+DELETE  {{host}}:{{port}}/api/{{feature}}/delete-many-by-ids
+Content-Type: application/json
+
+{
+    "ids": ["64f22f5cee47fe5a315901d8"]
+}
+
+
