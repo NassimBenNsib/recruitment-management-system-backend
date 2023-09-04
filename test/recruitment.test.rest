@@ -33,16 +33,16 @@ Content-Type: application/json
 }
 
 ### Delete one record by id
-DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64dcafff2bebc00886063b10
+DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64f6057c4583e44772271fa9
 token: Bearer {{token}}
 
 ### Get many record
-GET {{host}}:{{port}}/api/{{feature}}/get-many?observation=&experience=&qualification=&needs=&sourceOfNeeds=&departmentHead=&education=&objective=&department=&status=Rejected&minRequestNumber=20&maxRequestNumber=200000&start=0&limit=200&order=1
+GET {{host}}:{{port}}/api/{{feature}}/get-many
 token: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "status": "Approved"
+    "status": "Pending"
 }
 
 ### Delete many records by ids

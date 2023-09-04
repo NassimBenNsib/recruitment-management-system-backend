@@ -1,37 +1,11 @@
 import mongoose from "mongoose";
 import { APP_CONFIG } from "../../config/index.js";
-import { UserModel } from "../models/index.js";
+import { CandidateModel, InterviewModel, UserModel } from "../models/index.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { UserRole, UserStatus } from "../constants/index.js";
 import { CounterModel } from "../models/counter.model.js";
 
-// const signIn = async (req, res) => {
-//   const { email, password } = req.body;
-//   try {
-//     const existingUser = await User.findOne({ email });
-//     if (!existingUser) {
-//       return response.status(404).json("User was not found");
-//     }
-//     const isPasswordCorrect = await bcrypt.compare(
-//       password,
-//       existingUser.password
-//     );
-//     if (!isPasswordCorrect) {
-//       return response.status(400).json({ message: "Invalid credentials" });
-//     }
-//     const token = jwt.sign(
-//       { id: existingUser._id, role: existingUser.role },
-//       APP_CONFIG.JWT_SECRET,
-//       {
-//         expiresIn: "1h",
-//       }
-//     );
-//     response.status(200).json({ result: existingUser, token });
-//   } catch (error) {
-//     response.status(500).json(error);
-//   }
-// };
 const login = async (request, response) => {
   try {
     const { email, password } = request.body;
@@ -270,6 +244,42 @@ const updateOneById = async (request, response) => {
     user.role = role;
     user.status = status;
     await user.save();
+    if (user.role === UserRole.Candidate) {
+      await CandidateModel.updateMany(
+        {
+          userNumber: user.userNumber,
+        },
+        {
+          $set: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+          },
+        }
+      );
+      await InterviewModel.updateMany(
+        {
+          candidateNumber: user.userNumber,
+        },
+        {
+          $set: {
+            candidateName: `${user.firstName} ${user.lastName}`,
+          },
+        }
+      );
+    }
+
+    if (user.role === UserRole.Technical_Evaluator)
+      await InterviewModel.updateMany(
+        {
+          evaluatorNumber: user.userNumber,
+        },
+        {
+          $set: {
+            evaluatorName: `${user.firstName} ${user.lastName}`,
+          },
+        }
+      );
     return response.status(200).json({
       type: "success",
       message: "User updated successfully",

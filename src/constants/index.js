@@ -10,12 +10,19 @@ export const RecruitmentStatus = {
   Pending: "Pending",
   Approved: "Approved",
   Rejected: "Rejected",
+  Closed: "Closed",
 };
 
 export const UserStatus = {
   Pending: "Pending",
   Approved: "Approved",
   Blocked: "Blocked",
+  Rejected: "Rejected",
+};
+
+export const CandidateStatus = {
+  Pending: "Pending",
+  Approved: "Approved",
   Rejected: "Rejected",
 };
 

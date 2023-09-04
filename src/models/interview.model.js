@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 
 const InterviewSchema = new mongoose.Schema({
-  requestNumber: { require: true, type: Number },
-  recruitmentId: { required: true, type: String },
   evaluatorId: { required: true, type: String },
-  candidateId: { required: true, type: String },
+  evaluatorNumber: { required: true, type: Number },
   evaluatorName: { required: true, type: String },
+  candidateId: { required: true, type: String },
+  candidateNumber: { required: true, type: Number },
   candidateName: { required: true, type: String },
   interviewDate: { required: true, type: Date },
-  grantedScore: { required: true, type: Number },
+  score: { required: true, type: Number },
 });
 
 export const InterviewModel = mongoose.model("Interview", InterviewSchema);

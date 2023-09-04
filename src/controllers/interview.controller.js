@@ -10,49 +10,48 @@ import {
 const createOne = async (request, response) => {
   try {
     const recruitment = await RecruitmentModel.findOne({
-      _id: new mongoose.Types.ObjectId(request.body.recruitmentId),
+      requestNumber: request.body.requestNumber,
     });
-    if (
-      !recruitment ||
-      recruitment.requestNumber !== request.body.requestNumber
-    )
+    if (!recruitment)
       return response.status(404).json({
         type: "error",
         message: "Recruitment not found",
         data: null,
       });
+    const evaluator = await UserModel.findOne({
+      userNumber: request.body.evaluatorNumber,
+    });
+    if (!evaluator)
+      return response.status(404).json({
+        type: "error",
+        message: "Evaluator not found",
+        data: null,
+      });
     const candidate = await CandidateModel.findOne({
-      _id: new mongoose.Types.ObjectId(request.body.candidateId),
-      recruitmentId: new mongoose.Types.ObjectId(request.body.recruitmentId),
-      requestNumber: request.body.requestNumber,
+      candidateNumber: request.body.candidateNumber,
     });
     if (!candidate)
-      return response.status(400).json({
+      return response.status(404).json({
         type: "error",
         message: "Candidate not found",
         data: null,
       });
     candidate.numberOfInterviews = candidate.numberOfInterviews + 1;
     await candidate.save();
-    const user = await UserModel.findOne({
-      _id: new mongoose.Types.ObjectId(request.body.evaluatorId),
-    });
-    if (!user)
-      return response.status(404).json({
-        type: "error",
-        message: "Evaluator not found",
-        data: null,
-      });
+
     const record = await InterviewModel.create({
-      ...request.body,
-      recruitmentId: new mongoose.Types.ObjectId(request.body.recruitmentId),
-      candidateId: new mongoose.Types.ObjectId(request.body.candidateId),
-      evaluatorId: new mongoose.Types.ObjectId(request.body.evaluatorId),
-      recruitmentNumber: recruitment.requestNumber,
-      evaluatorName: user.firstName + " " + user.lastName,
+      score: 0,
+      candidateId: candidate._id,
+      candidateNumber: candidate.candidateNumber,
       candidateName: candidate.firstName + " " + candidate.lastName,
-      grantedScore: 0,
+      evaluatorId: evaluator._id,
+      evaluatorNumber: evaluator.userNumber,
+      evaluatorName: evaluator.firstName + " " + evaluator.lastName,
+      recruitmentId: recruitment._id,
+      recruitmentNumber: recruitment.requestNumber,
+      interviewDate: request.body.interviewDate,
     });
+
     if (!record)
       return response.status(400).json({
         type: "error",

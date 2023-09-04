@@ -1,16 +1,14 @@
 @host = http://localhost
-@port = 8000
+@port = 5000
 @token = eyJhbGciOiJIUzI1NiJ9.LGZsZnplbWxmemUsZm1lbA.SS8RtrNp0MAgIFX8ueSp1WzlND99lGyo4tPDsghd3P0
 @feature = candidate
 
 ### Create new record
 POST {{host}}:{{port}}/api/{{feature}}/create-one
-Authorization: Bearer {{token}}
+token: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "requestNumber": 1,
-    "recruitmentId": "64dc7cf6b74831219c144396",
     "firstName": "firstName1",
     "lastName": "lastName1",
     "address": "address1",
@@ -21,66 +19,42 @@ Content-Type: application/json
     "dateOfBirth": "2021-07-20",
     "placeOfBirth": "placeOfBirth1",
     "candidateCv": "candidateCv1",
-    "status": "Pending"
+    "recruitmentNumber": 5,
+    "userNumber" : 1
 }
 
 ### Get one record by id
-GET {{host}}:{{port}}/api/{{feature}}/get-one-by-id/64dcc1f92069952483b80561
-Authorization: Bearer {{token}}
+GET {{host}}:{{port}}/api/{{feature}}/get-one-by-id/64f5d6a71c7034a3fbd81a1e
+token: Bearer {{token}}
 
 ### Update one record by id
-PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64dcc22a2069952483b8056a
-Authorization: Bearer {{token}}
+PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64f5d6a71c7034a3fbd81a1e
+token: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "requestNumber": 1,
-    "recruitmentId": "64dc7cf6b74831219c144396",
-    "firstName": "firstName1",
-    "lastName": "lastName1",
-    "address": "address1",
-    "postalCode": "postalCode1",
-    "phoneNumber": 123456789,
-    "email": "ddddd",
-    "degree": "degree1",
-    "dateOfBirth": "2021-07-20",
-    "placeOfBirth": "placeOfBirth1",
-    "candidateCv": "candidateCv1",
+    "firstName": "Nassim",
     "status": "Pending"
 }
 
 ### Delete one record by id
-DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64dcb6ab69c1fbcb84090b50
-Authorization: Bearer {{token}}
+DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64f5078d33de1d019a4e7ae0
+token: Bearer {{token}}
 
 ### Get many record
 GET {{host}}:{{port}}/api/{{feature}}/get-many
-Authorization: Bearer {{token}}
+token: Bearer {{token}}
 Content-Type: application/json
 
 {
-      "recruitmentId" : "",
-      "firstName" : "",
-      "lastName" : "",
-      "address" : "",
-      "postalCode" : "",
-      "email" : "",
-      "degree" : "",
-      "placeOfBirth" : "",
-      "status" : "",
-      "minRequestNumber" : 1,
-      "maxRequestNumber" : 200000000,
-      "start" : 1,
-      "limit" : 20,
-      "sortBy" : "email",
-      "order" : 1
+
 }
 
 ### Delete many records by ids
 DELETE  {{host}}:{{port}}/api/{{feature}}/delete-many-by-ids
-Authorization: Bearer {{token}}
+token: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "ids": ["64dcb7a2be237fdadfce09ce","64dcb7b7be237fdadfce09d2"]
+    "ids": ["64f5f6e40d878249d3256b14"]
 }

@@ -10,7 +10,7 @@ token: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "email": "zibi@example.com",
+    "email": "sami@example.com",
     "password": "example+123"
 }
 
@@ -23,7 +23,7 @@ Content-Type: application/json
 {
     "firstName": "First Name",
     "lastName": "Last Name",
-    "email": "hamza@example.com",
+    "email": "ssss@example.com",
     "password": "example+123"
 }
 
@@ -52,12 +52,14 @@ token: Bearer {{token}}
 ######################################
 ########    Update one user by id
 ######################################
-PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64f4cd1bb73552d72e65166c
+PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64f6032f1222e0ddf72ae012
 token: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "status": "Approved"
+    "firstName": "Nassim",
+    "lastName": "Boukhalfa",
+    "email": "nassim@gmail.cc"
 }
 
 ######################################
