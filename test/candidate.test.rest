@@ -19,7 +19,7 @@ Content-Type: application/json
     "dateOfBirth": "2021-07-20",
     "placeOfBirth": "placeOfBirth1",
     "candidateCv": "candidateCv1",
-    "recruitmentNumber": 5,
+    "recruitmentNumber": 2,
     "userNumber" : 1
 }
 

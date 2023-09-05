@@ -7,20 +7,20 @@ var storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     let ext = path.extname(file.originalname);
-    req.cv = Date.now() + ext;
-    cb(null, req.cv);
+    req.body.candidateCv = Date.now() + ext;
+    cb(null, req.body.candidateCv);
   },
 });
 export var upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    if (file.mimetype === "application/pdf") {
+    if (file && file.mimetype === "application/pdf") {
       cb(null, true);
     } else {
-      cb(new Error("File must be a PDF!"), false);
+      cb(null, false);
     }
   },
   limits: {
-    fileSize: 1024 * 1024 * 2,
+    fileSize: 1024 * 1024 * 50,
   },
 });

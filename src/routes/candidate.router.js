@@ -1,12 +1,14 @@
 import { Router } from "express";
 import { CandidateController } from "../controllers/index.js";
 import { verifyTokenAndRole } from "../middlewares/authorize.js";
+import { upload } from "../middlewares/uploadFile.js";
 
 const CandidateRouter = Router();
 
 CandidateRouter.post(
   "/create-one",
   //verifyTokenAndRole(["HR Manager"]),
+  upload.single("file"),
   CandidateController.createOne
 );
 CandidateRouter.get("/get-one-by-id/:id", CandidateController.getOneById);

@@ -91,6 +91,7 @@ const createOne = async (request, response) => {
       { $inc: { candidateNumber: 1 } },
       { new: true }
     );
+    console.log(request.body);
     const record = await CandidateModel.create({
       ...request.body,
       recruitmentId: recruitment._id,
