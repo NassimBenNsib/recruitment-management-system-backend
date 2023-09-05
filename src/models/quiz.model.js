@@ -14,7 +14,8 @@ const QuestionSchema = new mongoose.Schema({
   },
 });
 const QuizSchema = new mongoose.Schema({
-  interviewId: { required: true, type: String, trim: true, unique: true },
+  interviewNumber: { required: true, type: Number, trim: true },
+  interviewId: { required: true, type: String, trim: true },
   theme: { required: true, type: String, trim: true },
   quiz: { required: true, type: [QuestionSchema], trim: true },
 });

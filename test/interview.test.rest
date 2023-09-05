@@ -1,5 +1,5 @@
 @host = http://localhost
-@port = 8000
+@port = 5000
 @token = eyJhbGciOiJIUzI1NiJ9.LGZsZnplbWxmemUsZm1lbA.SS8RtrNp0MAgIFX8ueSp1WzlND99lGyo4tPDsghd3P0
 @feature = interview
 
@@ -9,53 +9,37 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "requestNumber": 1,
-    "recruitmentId": "64dc7cf6b74831219c144396",
-    "candidateId": "64dcc1f92069952483b80561",
-    "evaluatorId" : "64d4e6e9b61e37572ad901c2",
+    "recruitmentNumber" : 1,
+    "evaluatorNumber" : 5,
+    "candidateNumber" : 14,
     "interviewDate": "2021-07-20T20:00"
 }
 
 ### Get one record by id
-GET {{host}}:{{port}}/api/{{feature}}/get-one-by-id/64dce0d67514a379e2e40388
+GET {{host}}:{{port}}/api/{{feature}}/get-one-by-id/64f777d652f671919206d301
 Authorization: Bearer {{token}}
 
 ### Update one record by id
-PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64dce0d67514a379e2e40388
+PUT {{host}}:{{port}}/api/{{feature}}/update-one-by-id/64f777d652f671919206d301
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "evaluatorId" : "64d4f62c41d1c7508d017d14",
-    "interviewDate": "2025-07-20T20:00",
-    "grantedScore" :10000
+    "interviewDate": "2022-07-20T20:00",
+    "evaluatorNumber": 3
 }
 
 ### Delete one record by id
-DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64dcdf7d46c151d52905dbd0
+DELETE  {{host}}:{{port}}/api/{{feature}}/delete-one-by-id/64f7721f66adf2b4fae7eca5
 Authorization: Bearer {{token}}
 
 ### Get many record
-GET {{host}}:{{port}}/api/{{feature}}/get-many
+GET {{host}}:{{port}}/api/{{feature}}/get-many?minEvaluatorNumber=3&maxEvaluatorNumber=3
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-      "recruitmentId" : "",
-      "candidateId" : "",
-      "evaluatorId" : "",
-      "evaluatorName" : "",
-      "candidateName" : "",
-      "minInterviewDate" : "2021-07-20",
-      "maxInterviewDate" : "2022-07-20",
-      "minGrantedScore" : 0,
-      "maxGrantedScore" : 1000,
-      "minRequestNumber" : 1,
-      "maxRequestNumber" : 200000000,
-      "start" : 1,
-      "limit" : 20,
-      "sortBy" : "interviewDate",
-      "order" : 1
+
 }
 
 ### Delete many records by ids

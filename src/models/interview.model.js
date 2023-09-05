@@ -7,6 +7,7 @@ const InterviewSchema = new mongoose.Schema({
   candidateId: { required: true, type: String },
   candidateNumber: { required: true, type: Number },
   candidateName: { required: true, type: String },
+  interviewNumber: { required: true, type: Number },
   interviewDate: { required: true, type: Date },
   score: { required: true, type: Number },
 });

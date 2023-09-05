@@ -6,11 +6,13 @@ import {
   RecruitmentModel,
   UserModel,
 } from "../models/index.js";
+import { CounterModel } from "../models/counter.model.js";
+import { UserRole, UserStatus } from "../constants/index.js";
 
 const createOne = async (request, response) => {
   try {
     const recruitment = await RecruitmentModel.findOne({
-      requestNumber: request.body.requestNumber,
+      recruitmentNumber: request.body.recruitmentNumber,
     });
     if (!recruitment)
       return response.status(404).json({
@@ -39,6 +41,12 @@ const createOne = async (request, response) => {
     candidate.numberOfInterviews = candidate.numberOfInterviews + 1;
     await candidate.save();
 
+    const counter = await CounterModel.findOneAndUpdate(
+      {},
+      { $inc: { interviewNumber: 1 } },
+      { new: true }
+    );
+
     const record = await InterviewModel.create({
       score: 0,
       candidateId: candidate._id,
@@ -49,6 +57,7 @@ const createOne = async (request, response) => {
       evaluatorName: evaluator.firstName + " " + evaluator.lastName,
       recruitmentId: recruitment._id,
       recruitmentNumber: recruitment.requestNumber,
+      interviewNumber: counter.interviewNumber,
       interviewDate: request.body.interviewDate,
     });
 
@@ -109,29 +118,42 @@ const updateOneById = async (request, response) => {
         message: "Record not found",
         data: null,
       });
-    const newRecord = {
-      evaluatorId: record.evaluatorId,
-      grantedScore: record.grantedScore,
-      interviewDate: record.interviewDate,
-      ...request.body,
-      evaluatorName: record.evaluatorName,
-    };
-    if (newRecord.evaluatorId !== record.evaluatorId) {
-      const user = await UserModel.findOne({
-        _id: new mongoose.Types.ObjectId(newRecord.evaluatorId),
+    const quiz = QuizModel.findOne({
+      interviewNumber: record.interviewNumber,
+    });
+    if (quiz.interviewNumber)
+      return response.status(400).json({
+        type: "error",
+        message: "Interview already evaluated",
+        data: null,
       });
-      if (!user)
+    if (
+      request.body.evaluatorNumber &&
+      request.body.evaluatorNumber !== record.evaluatorNumber
+    ) {
+      const evaluator = await UserModel.findOne({
+        userNumber: request.body.evaluatorNumber,
+      });
+      if (!evaluator)
         return response.status(404).json({
           type: "error",
           message: "Evaluator not found",
           data: null,
         });
-      record.evaluatorId = new mongoose.Types.ObjectId(newRecord.evaluatorId);
-      record.evaluatorName = user.firstName + " " + user.lastName;
+      if (evaluator.role !== UserRole.Technical_Evaluator)
+        return response.status(400).json({
+          type: "error",
+          message: "User is not a technical evaluator",
+        });
+      record.evaluatorId = new mongoose.Types.ObjectId(evaluator._id);
+      record.evaluatorName = evaluator.firstName + " " + evaluator.lastName;
+      record.evaluatorNumber = evaluator.userNumber;
     }
-    record.grantedScore = newRecord.grantedScore;
+    const newRecord = {
+      interviewDate: record.interviewDate,
+      ...request.body,
+    };
     record.interviewDate = newRecord.interviewDate;
-
     await record.save();
     return response.status(200).json({
       type: "success",
@@ -168,10 +190,28 @@ const deleteOneById = async (request, response) => {
         message: "Candidate not found",
         data: null,
       });
-    await QuizModel.findOneAndDelete({
-      interviewId: id,
-    });
     candidate.numberOfInterviews = candidate.numberOfInterviews - 1;
+    const quiz = await QuizModel.findOneAndDelete({
+      interviewNumber: record.interviewNumber,
+    });
+    if (quiz) {
+      const interviews = await InterviewModel.find({
+        candidateNumber: candidate.candidateNumber,
+      });
+      let score = 0,
+        evaluatedInterviews = 0;
+      for (let i = 0; i < interviews.length; i++) {
+        const quiz = await QuizModel.findOne({
+          interviewNumber: interviews[i].interviewNumber,
+        });
+        if (quiz) {
+          evaluatedInterviews++;
+          score += interviews[i].score;
+        }
+      }
+      if (evaluatedInterviews !== 0)
+        candidate.score = score / evaluatedInterviews;
+    }
     await candidate.save();
     return response.status(200).json({
       type: "success",
@@ -192,19 +232,23 @@ const getMany = async (request, response) => {
       recruitmentId = "",
       candidateId = "",
       evaluatorId = "",
+      minInterviewNumber = 1,
+      maxInterviewNumber = 200000000,
+      minCandidateNumber = 1,
+      maxCandidateNumber = 200000000,
+      minEvaluatorNumber = 1,
+      maxEvaluatorNumber = 200000000,
       evaluatorName = "",
       candidateName = "",
       minInterviewDate = Date.now() - 31556926000 * 3, // 3 years ago
       maxInterviewDate = Date.now() * 2, // 2 years later
-      minGrantedScore = 0,
-      maxGrantedScore = 1000,
-      minRequestNumber = 1,
-      maxRequestNumber = 200000000,
+      minScore = 0,
+      maxScore = 10000,
       start = 0,
-      limit = 20,
+      limit = 200_000_000,
       sortBy = "interviewDate",
       order = 1,
-    } = request.body;
+    } = request.query;
     const filter = {
       evaluatorName: { $regex: evaluatorName, $options: "i" },
       candidateName: { $regex: candidateName, $options: "i" },
@@ -212,13 +256,21 @@ const getMany = async (request, response) => {
         $gte: new Date(minInterviewDate),
         $lte: new Date(maxInterviewDate),
       },
-      grantedScore: {
-        $gte: minGrantedScore,
-        $lte: maxGrantedScore,
+      score: {
+        $gte: minScore,
+        $lte: maxScore,
       },
-      requestNumber: {
-        $gte: minRequestNumber,
-        $lte: maxRequestNumber,
+      interviewNumber: {
+        $gte: minInterviewNumber,
+        $lte: maxInterviewNumber,
+      },
+      candidateNumber: {
+        $gte: minCandidateNumber,
+        $lte: maxCandidateNumber,
+      },
+      evaluatorNumber: {
+        $gte: minEvaluatorNumber,
+        $lte: maxEvaluatorNumber,
       },
     };
     if (recruitmentId !== "")
@@ -246,54 +298,10 @@ const getMany = async (request, response) => {
   }
 };
 
-const deleteManyByIds = async (request, response) => {
-  try {
-    const { ids } = request.body;
-    if (ids.length === 0)
-      return response.status(400).json({
-        type: "error",
-        message: "Please select Candidate to delete",
-        data: null,
-      });
-    const objectIdArray = ids.map((id) => new mongoose.Types.ObjectId(id));
-    const records = await InterviewModel.deleteMany({
-      _id: { $in: objectIdArray },
-    });
-    for (let i = 0; i < records.length; i++) {
-      const candidate = await CandidateModel.findOne({
-        _id: new mongoose.Types.ObjectId(records[i].candidateId),
-      });
-      candidate.numberOfInterviews = candidate.numberOfInterviews - 1;
-      await candidate.save();
-      await QuizModel.findOneAndDelete({
-        interviewId: ids[i]._id,
-      });
-    }
-    if (!records || records.deletedCount !== ids.length)
-      return response.status(199).json({
-        type: "warning",
-        message: "Some records not found",
-        data: records,
-      });
-    return response.status(200).json({
-      type: "success",
-      message: "All selected records deleted successfully",
-      data: records,
-    });
-  } catch (error) {
-    return response.status(500).json({
-      type: "error",
-      message: "Error during deleting records, Please try again later",
-      data: error,
-    });
-  }
-};
-
 export const InterviewController = {
   createOne,
   getOneById,
   updateOneById,
   deleteOneById,
   getMany,
-  deleteManyByIds,
 };
